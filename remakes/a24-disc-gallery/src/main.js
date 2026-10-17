@@ -175,6 +175,9 @@ function revealPage(container) {
  * 详情页没有画廊，这里只更新导航；画廊页则换数据源、换事件宿主。
  */
 function bindPage(container, { first = false } = {}) {
+  // 这两步对详情页同样要做：导航活过切换，换到哪一页都得跟着那一页重算
+  updateGalleryRoot(container);
+  syncNav();
   setupHoverLinks(document);
 
   const section = container.querySelector('[data-disc-gallery]');
@@ -222,8 +225,40 @@ function bindPage(container, { first = false } = {}) {
 // ---------------------------------------------------------------------------
 const firstContainer = document.querySelector('[data-barba="container"]');
 const firstSection = firstContainer?.querySelector('[data-disc-gallery]');
-const pageBase = firstContainer?.dataset.pageBase ?? '';
 const detailPage = firstContainer?.querySelector('[data-detail-page]');
+
+// 画廊根目录的绝对地址。
+//
+// 页面里的相对前缀（data-page-base：首页 ''、television/ 是 '../'、
+// 详情页是 '../../'）是按**那一页的深度**写死的，所以只在那一页成立。
+// 导航在 [data-barba="container"] 外面，Barba 换页时不换它，
+// 于是换完页导航还挂着上一页的前缀：从 /television/ 回首页之后，
+// 导航里的 '../' 指到了画廊外面，Television 更是直接 404。
+//
+// 所以不留相对值：拿到容器的 base 就立刻按当前文档解析成绝对地址存起来，
+// 换页时用新容器的 base 重算一次。站点挂在什么路径下都成立
+// （Pages 的 /web-remakes/... 与本地 http.server 的根都适用）。
+let galleryRoot = new URL(
+  firstContainer?.dataset.pageBase || './',
+  document.baseURI,
+).href;
+
+/** 换页时用新容器的 data-page-base 重算画廊根。 */
+function updateGalleryRoot(container) {
+  const base = container?.dataset?.pageBase;
+  if (base === undefined) return;
+  galleryRoot = new URL(base || './', document.baseURI).href;
+}
+
+/**
+ * 把导航链接改写成绝对地址。
+ * 导航活过所有切换，不能留任何按深度算的相对值。
+ */
+function syncNav() {
+  document.querySelectorAll('[data-nav-to]').forEach((link) => {
+    link.href = new URL(link.dataset.navTo, galleryRoot).href;
+  });
+}
 
 /** 详情页直接打开时也要有画廊，否则返回时没有盘可飞。挂一个屏外的宿主。 */
 function detachedHost() {
@@ -258,12 +293,13 @@ function detachedHost() {
  */
 async function catalogForDetail(page) {
   const collection = page.dataset.detailCollection ?? 'films';
-  const url = collection === 'television' ? `${pageBase}television/` : pageBase || './';
+  const url = new URL(collection === 'television' ? 'television/' : './', galleryRoot)
+    .href;
   try {
     const html = await fetch(url, { credentials: 'same-origin' }).then((r) => r.text());
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const section = doc.querySelector('[data-disc-gallery]');
-    if (section) return readItems(section, new URL(url, document.baseURI).href);
+    if (section) return readItems(section, url);
   } catch {
     /* 取不到就空着：详情页本身是静态直出的，照样可读 */
   }
@@ -303,6 +339,7 @@ if (detailPage) {
   shell.carry?.appendChild(shell.canvasMount);
   shell.carry?.classList.add('is-active');
   gsap.set(shell.carry, { autoAlpha: 0 });
+  syncNav();
   setupHoverLinks(document);
   document.documentElement.removeAttribute('data-preload');
 } else {

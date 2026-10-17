@@ -29,11 +29,18 @@ const upTo = (depth) => '../'.repeat(depth);
 
 const A24_LOGO = (await readFile(join(here, 'logo.svg'), 'utf8')).trim();
 
-/** 导航。current 决定哪一项是 aria-current，base 决定链接深度。 */
+/**
+ * 导航。current 决定哪一项是 aria-current，base 决定链接深度。
+ *
+ * href 里仍然写按本页深度算好的相对地址 —— 这样禁用 JS 或首屏未执行时
+ * 导航照样可点。但导航在 [data-barba="container"] 外面，Barba 换页时不换它，
+ * 换完页这个前缀就是上一页的了。所以同时带一份 data-nav-to（相对画廊根），
+ * main.js 每次绑定页面时按新页面重算成绝对地址写回 href。
+ */
 function nav(current, base) {
-  const item = (label, href) => {
+  const item = (label, href, navTo) => {
     const active = current === label.toLowerCase();
-    return `          <li><a class="nav-link" data-hover href="${href}"${
+    return `          <li><a class="nav-link" data-hover href="${href}" data-nav-to="${navTo}"${
       active ? ' aria-current="page"' : ''
     }><span data-hover-target>${label}</span></a></li>`;
   };
@@ -42,12 +49,12 @@ function nav(current, base) {
         <div class="nav-bg"></div>
         <ul class="nav-center__list">
           <li>
-            <a class="nav-logo" href="${base || './'}" aria-label="A24 home">
+            <a class="nav-logo" href="${base || './'}" data-nav-to="./" aria-label="A24 home">
 ${A24_LOGO}
             </a>
           </li>
-${item('Films', base || './')}
-${item('Television', `${base}television/`)}
+${item('Films', base || './', './')}
+${item('Television', `${base}television/`, 'television/')}
           <!-- Index 是原站的下拉菜单，没复刻（见 README）。
                之前拿它当指向首页的链接，点了只会原地刷新，更像坏了；
                这里退成不可点的占位，标注 aria-disabled。 -->
