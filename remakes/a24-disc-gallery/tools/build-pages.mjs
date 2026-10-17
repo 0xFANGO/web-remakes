@@ -48,7 +48,10 @@ ${A24_LOGO}
           </li>
 ${item('Films', base || './')}
 ${item('Television', `${base}television/`)}
-          <li><a class="nav-link" data-hover href="${base || './'}"><span data-hover-target>Index</span></a></li>
+          <!-- Index 是原站的下拉菜单，没复刻（见 README）。
+               之前拿它当指向首页的链接，点了只会原地刷新，更像坏了；
+               这里退成不可点的占位，标注 aria-disabled。 -->
+          <li><span class="nav-link nav-link--disabled" data-hover aria-disabled="true"><span data-hover-target>Index</span></span></li>
         </ul>
       </div>
     </nav>`;

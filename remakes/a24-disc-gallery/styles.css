@@ -199,6 +199,13 @@ body {
   scale: 1.05;
 }
 
+/* Index 没复刻，是个占位，不接受指针也不给手型 */
+.nav-link--disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
 .nav-link:hover [data-hover-inner] > [data-hover-text] {
   clip-path: inset(100% 0 0);
   translate: 0 0.25em;

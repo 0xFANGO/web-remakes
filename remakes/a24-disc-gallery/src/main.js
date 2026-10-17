@@ -369,6 +369,34 @@ window.addEventListener('keydown', (event) => {
   if (back) barba.go(back.href);
 });
 
+// 点当前页自己（Television 页上的 Television、首页上的 Films / Index）
+// 应该什么都不做。Barba 默认不拦同地址，会照常跑一次过渡，而 disc-flip 的
+// from/to 都是 films|television，于是它试着把容器换成自己：过渡走不完，
+// 最后退化成整页刷新，preloader 又播一遍，人看着像"点了没反应"。
+// Barba 内置了 sameUrl 测试，但默认没放进 suite，所以这里自己判。
+// 用捕获阶段，赶在 Barba 的 click 监听之前把事件吞掉。
+document.addEventListener(
+  'click',
+  (event) => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target?.closest?.('a[href]');
+    if (!link || link.target === '_blank') return;
+    if (samePage(link.href)) event.preventDefault();
+  },
+  true,
+);
+
+/** href 是否就是当前页（只比路径，忽略 hash 与查询串）。 */
+function samePage(href) {
+  if (!href) return false;
+  try {
+    return new URL(href, document.baseURI).pathname === location.pathname;
+  } catch {
+    return false;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Barba
 // ---------------------------------------------------------------------------
@@ -377,7 +405,13 @@ barba.init({
   preventRunning: true,
   timeout: 7000,
   // reduced-motion 下整个无刷新切换都不走，交给浏览器直接跳转
-  prevent: ({ el }) => reducedMotion || el?.hasAttribute?.('data-barba-prevent'),
+  prevent: ({ el, href }) => {
+    if (reducedMotion) return true;
+    if (el?.hasAttribute?.('data-barba-prevent')) return true;
+    // 点当前页自己：上面那个捕获阶段的 click 监听已经把事件吞掉了，
+    // 走到这里的只剩 barba.go() 之类的程序化调用，一并拦住。
+    return samePage(href);
+  },
   transitions: createTransitions(shell),
 });
 
