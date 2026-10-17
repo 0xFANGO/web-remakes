@@ -444,14 +444,13 @@ html[data-preload] [data-testimonial-wrap] {
   inset: 0;
 }
 
-.detail[hidden] {
-  display: none;
-}
-
+/* 详情页。现在是真实页面（production/<slug>/），不再是覆盖层。
+   背景仍然半透明加模糊：canvas 作为 fixed 载体铺在底下，
+   光盘隔着这层玻璃透出来，"飞进来"之后就停在那儿。 */
 .detail {
-  position: fixed;
-  inset: 0;
+  position: relative;
   z-index: 70;
+  min-height: 100svh;
   display: grid;
   place-items: center;
   padding: var(--container-padding);
@@ -474,6 +473,8 @@ html[data-preload] [data-testimonial-wrap] {
 
 .detail__close {
   position: fixed;
+  text-decoration: none;
+  display: inline-block;
   top: var(--container-padding);
   right: var(--container-padding);
   padding: 0.35em 0.95em;

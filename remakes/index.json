@@ -3,19 +3,24 @@
   "remakes": [
     {
       "slug": "a24-disc-gallery",
-      "title": "A24 — Films",
+      "title": "A24 — Films & Television",
       "subtitle": "三维光盘轮播",
       "source": "https://a24.raviklaassens.com/",
       "sourceCredit": "Ravi Klaassens",
       "date": "2026-10-17",
-      "summary": "12 张电影光盘排成一道弧线，滚轮推动轮播。质感全靠程序化贴图与一张 canvas 环境贴图，没有任何外部美术资源。",
+      "summary": "两套目录各自一道光盘弧线，滚轮推动轮播，点光盘进详情页。质感全靠程序化贴图与一张 canvas 环境贴图；三类页面之间 Barba 无刷新切换，WebGL canvas 全程不重建。",
       "highlights": [
         "three.js MeshPhysicalMaterial：背面 iridescence 做 CD 虹彩",
         "四张程序化贴图：法线与粗糙度都用像素循环生成",
         "滚轮手势状态机：触控板与鼠标滚轮都是一次手势一格",
+        "Barba 多页切换：canvas 摘进 fixed 载体，光盘\"飞\"进详情页",
         "按需渲染：空闲时零 rAF"
       ],
-      "stack": ["three.js", "GSAP"]
+      "stack": [
+        "three.js",
+        "GSAP",
+        "Barba"
+      ]
     }
   ]
 }

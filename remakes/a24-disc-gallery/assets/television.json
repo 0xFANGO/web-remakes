@@ -1,0 +1,128 @@
+[
+  {
+    "title": "The Quiet Channel",
+    "directors": ["Mira Okonkwo"],
+    "year": "2026",
+    "starring": ["Jessie Buckley", "Barry Keoghan", "Clarke Peters"],
+    "discArtUrl": "assets/art/tv/the-quiet-channel.webp",
+    "discArtAlt": "The Quiet Channel disc artwork",
+    "detailUrl": "/production/the-quiet-channel",
+    "reviews": [
+      {
+        "publication": "The Atlantic",
+        "testimonial": "Dread Tuned To Static",
+        "stars": 5
+      },
+      {
+        "publication": "Vulture",
+        "testimonial": "A Slow Burn Worth Every Minute",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "Low Tide",
+    "directors": ["Tomas Halle"],
+    "year": "2026",
+    "starring": ["Paul Mescal", "Thuso Mbedu", "Ciarán Hinds"],
+    "discArtUrl": "assets/art/tv/low-tide.webp",
+    "discArtAlt": "Low Tide disc artwork",
+    "detailUrl": "/production/low-tide",
+    "reviews": [
+      {
+        "publication": "The Guardian",
+        "testimonial": "Grief Measured In Water",
+        "stars": 5
+      },
+      {
+        "publication": "Little White Lies",
+        "testimonial": "Patient, Salt-Bitten, Alive",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "Nightjar",
+    "directors": ["Annika Reuss"],
+    "year": "2025",
+    "starring": ["Sophie Okonedo", "Dev Patel", "Hong Chau"],
+    "discArtUrl": "assets/art/tv/nightjar.webp",
+    "discArtAlt": "Nightjar disc artwork",
+    "detailUrl": "/production/nightjar",
+    "reviews": [
+      {
+        "publication": "IndieWire",
+        "testimonial": "A Thriller That Listens",
+        "stars": 5
+      },
+      {
+        "publication": "Paste",
+        "testimonial": "Hypnotic And Deeply Strange",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "The Understudy",
+    "directors": ["Juno Park"],
+    "year": "2025",
+    "starring": ["Carey Mulligan", "Colman Domingo", "Ayo Edebiri"],
+    "discArtUrl": "assets/art/tv/the-understudy.webp",
+    "discArtAlt": "The Understudy disc artwork",
+    "detailUrl": "/production/the-understudy",
+    "reviews": [
+      {
+        "publication": "The New Yorker",
+        "testimonial": "Ambition With Its Teeth Out",
+        "stars": 5
+      },
+      {
+        "publication": "Time",
+        "testimonial": "Mulligan Has Never Been Sharper",
+        "stars": 5
+      }
+    ]
+  },
+  {
+    "title": "Salt Flats",
+    "directors": ["Rafael Ibáñez"],
+    "year": "2024",
+    "starring": ["Lily Gladstone", "Jeremy Allen White", "Wes Studi"],
+    "discArtUrl": "assets/art/tv/salt-flats.webp",
+    "discArtAlt": "Salt Flats disc artwork",
+    "detailUrl": "/production/salt-flats",
+    "reviews": [
+      {
+        "publication": "Rolling Stone",
+        "testimonial": "A Western Built From Silence",
+        "stars": 4.5
+      },
+      {
+        "publication": "The Ringer",
+        "testimonial": "Gladstone Holds The Horizon",
+        "stars": 5
+      }
+    ]
+  },
+  {
+    "title": "Paper Moonlight",
+    "directors": ["Wen Li"],
+    "year": "2024",
+    "starring": ["Greta Lee", "Andrew Scott", "Youn Yuh-jung"],
+    "discArtUrl": "assets/art/tv/paper-moonlight.webp",
+    "discArtAlt": "Paper Moonlight disc artwork",
+    "detailUrl": "/production/paper-moonlight",
+    "reviews": [
+      {
+        "publication": "Sight and Sound",
+        "testimonial": "Tender Without Being Soft",
+        "stars": 5
+      },
+      {
+        "publication": "The Playlist",
+        "testimonial": "Every Frame A Held Breath",
+        "stars": 4.5
+      }
+    ]
+  }
+]

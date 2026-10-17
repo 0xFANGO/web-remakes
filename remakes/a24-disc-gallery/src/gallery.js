@@ -15,7 +15,11 @@ const DISC_GLIDE = 'cubic-bezier(0.32, 0.72, 0, 1)';
 
 export function createGallery({ container, canvasMount, films, settings = CONFIG }) {
   const S = settings;
-  const filmCount = films.length;
+  // films / filmCount / container 都是可变的：Barba 换页时画廊本身不重建
+  // （renderer、贴图、环境贴图全部留用），只换数据源和事件宿主。
+  let films_ = films;
+  let filmCount = films_.length;
+  let container_ = container;
 
   // ---- 渲染器 ----
   const renderer = new THREE.WebGLRenderer({
@@ -71,7 +75,11 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
 
   // ---- 光盘池 ----
   // 只实例化视野内的盘，池化复用，避免 12 张全建
-  const poolSize = Math.min(filmCount, S.renderRadius * 2 + 3);
+  // 池子按"可能遇到的最大目录"算一次就固定：换目录只重新分配，不再建盘。
+  const poolSize = Math.min(
+    Math.max(filmCount, S.maxCatalogSize ?? filmCount),
+    S.renderRadius * 2 + 3,
+  );
   const pool = [];
   const free = [];
   const active = new Map(); // filmIndex -> disc
@@ -550,7 +558,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
   const artCache = new Map(); // url -> {status, texture}
 
   function loadArtwork(index) {
-    const film = films[index];
+    const film = films_[index];
     if (!film?.artwork) return;
 
     const cached = artCache.get(film.artwork);
@@ -590,7 +598,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
   function applyArtwork(index) {
     const disc = active.get(index);
     if (!disc) return;
-    const entry = artCache.get(films[index]?.artwork);
+    const entry = artCache.get(films_[index]?.artwork);
     const texture =
       entry?.status === 'loaded' && entry.texture
         ? entry.texture
@@ -712,9 +720,9 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
 
   function emitChange(index) {
     currentIndex = index;
-    container.dispatchEvent(
+    container_.dispatchEvent(
       new CustomEvent('discgallerychange', {
-        detail: { index, film: films[index] },
+        detail: { index, film: films_[index] },
       }),
     );
   }
@@ -830,7 +838,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
       hoverIndex = hit;
       requestFrames(2);
     }
-    container.style.cursor = hit >= 0 ? 'pointer' : 'grab';
+    container_.style.cursor = hit >= 0 ? 'pointer' : 'grab';
   }
 
   function onPointerMove(event) {
@@ -842,7 +850,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
         hoverIndex = hit;
         requestFrames(2);
       }
-      container.style.cursor = hit >= 0 ? 'pointer' : 'grab';
+      container_.style.cursor = hit >= 0 ? 'pointer' : 'grab';
       if (hoverIndex >= 0) requestFrames(1);
       return;
     }
@@ -868,7 +876,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
         if (snapTween) snapTween.kill();
         snapTween = null;
       }
-      container.style.cursor = 'grabbing';
+      container_.style.cursor = 'grabbing';
     }
 
     if (spinningDisc >= 0) {
@@ -910,14 +918,14 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
     pointerLast = { ...pointerStart };
     dragVelocity = 0;
     pointerDownIndex = hitTest();
-    container.setPointerCapture?.(event.pointerId);
-    container.focus({ preventScroll: true });
+    container_.setPointerCapture?.(event.pointerId);
+    container_.focus({ preventScroll: true });
   }
 
   function onPointerUp(event) {
     if (!pointerDown) return;
     pointerDown = false;
-    container.releasePointerCapture?.(event.pointerId);
+    container_.releasePointerCapture?.(event.pointerId);
 
     const moved = Math.hypot(
       event.clientX - pointerStart.x,
@@ -941,7 +949,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
           },
         });
       }
-      container.style.cursor = 'pointer';
+      container_.style.cursor = 'pointer';
       requestFrames(2);
       if (moved < S.dragStartDistance) openDetail(index);
       return;
@@ -949,7 +957,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
 
     if (dragging) {
       dragging = false;
-      container.style.cursor = 'grab';
+      container_.style.cursor = 'grab';
       // 触屏甩动：速度够大就按方向进一格
       if (
         event.pointerType !== 'mouse' &&
@@ -1066,9 +1074,9 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
   }
 
   function openDetail(index) {
-    container.dispatchEvent(
+    container_.dispatchEvent(
       new CustomEvent('discgalleryopen', {
-        detail: { index, film: films[index] },
+        detail: { index, film: films_[index] },
       }),
     );
   }
@@ -1134,7 +1142,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
 
   // ---- 尺寸 ----
   function resize() {
-    const rect = container.getBoundingClientRect();
+    const rect = container_.getBoundingClientRect();
     // 首帧 section 可能还没布局完，退回视口尺寸；
     // 传 0 给 setSize 会让透射 render target 变成零尺寸，每帧刷 WebGL 错误。
     const width = Math.max(1, Math.round(rect.width) || window.innerWidth);
@@ -1169,12 +1177,12 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
     reducedMotion = event.matches;
   };
 
-  container.addEventListener('wheel', onWheel, { passive: false });
-  container.addEventListener('pointerdown', onPointerDown);
+  container_.addEventListener('wheel', onWheel, { passive: false });
+  container_.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
   window.addEventListener('pointercancel', onPointerUp);
-  container.addEventListener('keydown', onKeyDown);
+  container_.addEventListener('keydown', onKeyDown);
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVisibility);
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1200,7 +1208,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
       return currentIndex;
     },
     get films() {
-      return films;
+      return films_;
     },
     snapTo,
     flipDisc,
@@ -1209,10 +1217,77 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
     requestFrames,
     emitChange,
     resize,
+    /**
+     * 换目录（films ↔ television）。画廊实例不重建，
+     * 只把数据源换掉再重新分配光盘——renderer、贴图缓存、环境贴图全部留用，
+     * 这正是"两页共用一张光盘"错觉的物质基础。
+     */
+    setCatalog(nextFilms, { index = 0, silent = true } = {}) {
+      films_ = nextFilms;
+      filmCount = films_.length;
+
+      // 回收全部在用的盘，强制按新目录重分配（封面贴图按 url 缓存，换回来不重下）
+      active.forEach((disc) => {
+        disc.group.visible = false;
+        disc.index = -1;
+        disc.frontMaterial.map = assets.placeholderTexture;
+        free.push(disc);
+      });
+      active.clear();
+
+      if (snapTween) {
+        snapTween.kill();
+        snapTween = null;
+      }
+      position = clamp(index, 0, filmCount - 1);
+      velocity = 0;
+      currentIndex = Math.round(position);
+
+      assignDiscs(currentIndex);
+      prefetch(currentIndex);
+      layout(1, true);
+      requestFrames(2);
+      if (!silent) emitChange(currentIndex);
+    },
+    /** 过渡被打断时用：把入场相关的量摆回常态，不依赖 tween 跑完。 */
+    settlePose() {
+      const disc = active.get(nearestIndex());
+      if (disc) {
+        disc.spinY = 0;
+        disc.spin.rotation.z = 0;
+      }
+      flight.active = 1;
+      flight.others = 1;
+      flight.inbound = false;
+      requestFrames(2);
+    },
+    /**
+     * 换事件宿主。Barba 把旧容器整个换掉，监听器必须跟着搬，
+     * 否则换页后滚轮和拖拽会打在一个已经离开文档的节点上。
+     */
+    setContainer(nextContainer) {
+      if (!nextContainer || nextContainer === container_) return;
+      container_.removeEventListener('wheel', onWheel);
+      container_.removeEventListener('pointerdown', onPointerDown);
+      container_.removeEventListener('keydown', onKeyDown);
+      container_ = nextContainer;
+      container_.addEventListener('wheel', onWheel, { passive: false });
+      container_.addEventListener('pointerdown', onPointerDown);
+      container_.addEventListener('keydown', onKeyDown);
+      resize();
+    },
+    /** 当前中心盘，详情/翻面过渡要直接操作它的 spinY。 */
+    get activeDisc() {
+      return active.get(nearestIndex()) ?? null;
+    },
+    /** 过渡用：整组的缩放与透明度代理。 */
+    get flight() {
+      return flight;
+    },
     /** 等几何、贴图与 shader 都就位，preloader 据此算进度。 */
     async warmUp() {
       await Promise.all(
-        films
+        films_
           .slice(0, Math.min(filmCount, S.renderRadius + 1))
           .map((film) => artCache.get(film.artwork)?.promise)
           .filter(Boolean),
@@ -1226,7 +1301,7 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
       }
     },
     get artProgress() {
-      const window = films.slice(0, Math.min(filmCount, S.renderRadius + 1));
+      const window = films_.slice(0, Math.min(filmCount, S.renderRadius + 1));
       if (!window.length) return 1;
       const done = window.filter(
         (film) => artCache.get(film.artwork)?.status === 'loaded',
@@ -1238,12 +1313,12 @@ export function createGallery({ container, canvasMount, films, settings = CONFIG
       cancelAnimationFrame(rafId);
       cancelAnimationFrame(inertiaId);
       gsap.ticker.remove(velocityTicker);
-      container.removeEventListener('wheel', onWheel);
-      container.removeEventListener('pointerdown', onPointerDown);
+      container_.removeEventListener('wheel', onWheel);
+      container_.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerUp);
-      container.removeEventListener('keydown', onKeyDown);
+      container_.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVisibility);
       motionQuery.removeEventListener('change', onMotionChange);
