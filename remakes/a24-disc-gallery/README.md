@@ -175,6 +175,18 @@ ease 统一 `cubic-bezier(0.32, 0.72, 0, 1)`。
 | `disc-detail-close` | 详情淡出，当前盘从 −π/2 转正（1.05s），其他盘晚 0.28s 错开飞入 |
 | `disc-flip` | 当前盘翻到侧面（π/2），换目录，新页的盘从 −π/2 翻回来 |
 
+**详情页上光盘是淡出到看不见的**，所以详情页是纯文字。这是照着原站来的 ——
+A24 的详情页不把光盘留在画面上，光盘"飞进来"是过渡本身，不是详情页的背景。
+载体（`[data-disc-carry]`）在过渡收尾时淡到 0，canvas 并没有销毁，
+所以返回时同一张盘能立刻转回来。
+
+**`data-preload` 是文档级状态，不随容器换掉。** 它挂在 `<html>` 上，
+CSS 靠它把导航与文案按 `visibility:hidden` 藏住，等 preloader 跑完才摘。
+但 preloader 只在首次加载跑一次 —— Barba 换页（尤其是后退回画廊页）时
+没人再来摘它，页面就只剩一个导航空壳。所以 `bindPage()` 在非首屏的每次绑定上
+都调一次 `revealPage()` 把它和文案的 visibility 一起放开；
+首屏那次传 `{ first: true }` 跳过，不跟 preloader 抢。
+
 按压与回弹走的是 `flight.active`，不是新开一个属性 —— 布局里当前盘的缩放本来就是
 `baseScale * flight.active`，借现成的管线，`layout()` 一行没动。
 

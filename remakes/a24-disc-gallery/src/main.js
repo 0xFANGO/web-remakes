@@ -154,10 +154,27 @@ const onGalleryOpen = (event) => {
 };
 
 /**
+ * 放开导航与文案。
+ *
+ * `data-preload` 挂在 <html> 上，是整份文档的状态，不随 Barba 换容器而变；
+ * preloader 只在首次加载跑一次，换页之后没人再来摘它。后退回画廊页时它要是还在，
+ * CSS 就会一直按 visibility:hidden 把导航与文案藏着，页面上只剩一个导航空壳。
+ * 文案的 visibility 同理，本来由 preloader 的 revealCopy 放开。
+ */
+function revealPage(container) {
+  document.documentElement.removeAttribute('data-preload');
+  container
+    .querySelectorAll('.experience_info, [data-testimonial-wrap]')
+    .forEach((element) => {
+      element.style.visibility = 'visible';
+    });
+}
+
+/**
  * 把 shell 接到一个新页面的容器上。
  * 详情页没有画廊，这里只更新导航；画廊页则换数据源、换事件宿主。
  */
-function bindPage(container) {
+function bindPage(container, { first = false } = {}) {
   setupHoverLinks(document);
 
   const section = container.querySelector('[data-disc-gallery]');
@@ -165,6 +182,9 @@ function bindPage(container) {
     shell.section = null;
     return;
   }
+
+  // 首屏那次由 preloader 负责揭示，这里不能抢；换页进来的容器则没人管。
+  if (!first) revealPage(container);
 
   const items = readItems(section);
   shell.items = items;
@@ -286,7 +306,7 @@ if (detailPage) {
   setupHoverLinks(document);
   document.documentElement.removeAttribute('data-preload');
 } else {
-  bindPage(firstContainer);
+  bindPage(firstContainer, { first: true });
 }
 
 // ---------------------------------------------------------------------------
