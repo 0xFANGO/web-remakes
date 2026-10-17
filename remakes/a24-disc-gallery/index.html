@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en" data-preload>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A24 — Films · Disc Gallery Remake</title>
+    <meta
+      name="description"
+      content="三维光盘轮播的效果复刻：three.js 程序化材质、滚轮手势状态机、行遮罩文案切换。"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js",
+          "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/index.js"
+        }
+      }
+    </script>
+    <script>
+      // 入场前先隐藏导航与文案，由 preloader 收尾时揭示；
+      // reduced-motion 下不走这条路径。
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches)
+        document.documentElement.removeAttribute('data-preload');
+    </script>
+  </head>
+  <body>
+    <!-- 胶片颗粒：整页叠一层，所有画面的质感都来自它 -->
+    <div class="grain" data-grain-animate="true" aria-hidden="true"></div>
+
+    <nav class="nav" data-theme-target="nav" aria-label="Primary">
+      <div class="nav-container">
+        <div class="nav-bg"></div>
+        <ul class="nav-center__list">
+          <li>
+            <a class="nav-logo" href="#" aria-label="A24 home">
+              <svg viewBox="0 0 30 12" width="100%" fill="none" aria-hidden="true" class="a24-logo">
+                <path d="M12.0456 1.94642C12.0883 1.91983 12.1393 1.90006 12.1796 1.87455C13.9898 0.727347 16.1146 2.72865 15.054 4.60524C14.4761 5.6276 13.2413 5.86106 12.2685 5.35496C11.93 5.17889 11.5962 4.77068 11.4465 4.42277C10.854 2.87871 11.7747 1.22522 13.2257 0.574197C14.5991 -0.0420437 16.2422 -0.0332645 17.6842 0.318468C18.9285 0.646731 20.0847 1.56595 20.3458 2.87198C20.548 3.89311 20.348 5.0347 19.6204 5.80985C18.4094 7.10011 16.6512 7.1293 15.0842 7.64158C14.6001 7.79981 13.9424 7.94736 13.5848 8.32151C13.527 8.40951 13.5162 8.62962 13.5471 8.71669C13.7063 9.16462 14.4073 9.04164 14.8306 9.04158L18.9537 9.04166C19.1304 9.04171 20.2842 9.07264 20.3497 8.9915C20.7809 8.45737 21.2529 7.95944 21.7112 7.44963L24.811 4.01753C24.9379 3.87643 25.0579 3.72366 25.186 3.58082L28.1676 0.276358C28.2318 0.206448 28.2732 0.170593 28.3458 0.111376C28.3789 0.0843216 28.4014 0.0118805 28.4406 0C28.4682 0.122638 28.4596 0.628965 28.4596 0.783089L28.4594 8.73397C28.7174 8.72665 29.0408 8.73864 29.3022 8.74249V9.06284C29.1362 9.07105 28.6194 9.08598 28.4673 9.06968C28.4393 10.0258 28.474 11.0364 28.4617 12H25.1179C25.097 11.0492 25.116 10.0293 25.116 9.07231C24.0986 9.05126 23.0732 9.08042 22.055 9.06805C21.4654 9.06088 20.8777 9.08085 20.288 9.05709C19.9773 9.44576 19.5961 9.82743 19.2665 10.202C18.9019 10.6164 18.5253 11.0208 18.1648 11.4374C18.0516 11.5683 17.725 11.8751 17.665 12H11.1014C11.0593 9.79296 12.4675 8.21051 14.4775 7.49356C15.0302 7.29643 15.6204 7.17543 16.1624 7.0237C16.6284 6.89329 16.5071 5.75105 16.5066 5.29748L16.5068 1.68997C16.5068 1.45043 16.5044 1.21639 16.5001 0.973869C16.4852 0.163911 15.6512 0.370899 15.0946 0.407034C13.9137 0.483723 12.7456 0.932769 12.0456 1.94642ZM21.0601 8.74323C21.7159 8.72191 22.3765 8.73806 23.0331 8.73807C23.7223 8.7381 24.4147 8.72303 25.1034 8.74L25.1051 5.64172C25.1054 5.18973 25.129 4.70821 25.1086 4.2592C25.1076 4.2364 25.1084 4.22285 25.093 4.20519C24.8539 4.38422 24.5032 4.8275 24.289 5.06759L22.8135 6.71472C22.6727 6.87196 22.5252 7.0231 22.3845 7.18062C22.2402 7.34242 22.1022 7.51139 21.9552 7.67044C21.758 7.88345 21.5653 8.09846 21.3714 8.31432C21.2598 8.43856 21.1195 8.55622 21.0419 8.70558L21.0426 8.73357L21.0601 8.74323Z" fill="currentColor"></path>
+                <path d="M5.44675 0.327731C5.49835 0.477918 5.58354 0.617044 5.64951 0.7611C6.0219 1.57434 6.41089 2.38131 6.78716 3.19251L9.79678 9.67759C10.0708 10.2498 10.338 10.8253 10.5985 11.4038C10.6693 11.5596 10.8329 11.85 10.8557 12H7.17405C6.97854 11.5588 6.75761 11.1094 6.55924 10.6693C6.38958 10.293 6.12992 9.81504 5.9887 9.43795C5.54631 9.41561 5.05192 9.42479 4.60566 9.42462L1.5714 9.4363C1.45743 9.57504 1.15567 10.2644 1.0675 10.4545L0.339835 12H0V11.9208C0.0926468 11.8588 0.308002 11.3203 0.363348 11.2013L1.26077 9.2769L2.59144 6.43415C2.78863 6.00249 3.01158 5.57856 3.20007 5.14095C3.31697 4.86955 3.48101 4.59178 3.58469 4.31576C3.51471 4.13292 3.2352 3.576 3.22282 3.45149C3.25027 3.39493 3.61963 3.25864 3.71339 3.20962C3.98833 3.06587 4.22677 2.849 4.3783 2.56936C4.62711 2.11021 4.84546 1.6047 5.06315 1.12807C5.15728 0.915129 5.38736 0.521081 5.44675 0.327731ZM1.69948 9.09676C1.93739 9.08865 2.17672 9.09648 2.41481 9.09668L3.79869 9.09678C4.46583 9.0965 5.13923 9.07638 5.80562 9.09866C5.75403 8.90508 5.65754 8.7387 5.57401 8.55808L4.22512 5.65369C4.14843 5.4901 4.08452 5.32052 4.00467 5.15841C3.95785 5.06333 3.82141 4.74797 3.74508 4.70411C3.73696 4.69945 3.73563 4.69953 3.72597 4.6961C3.57539 5.13423 3.35039 5.54599 3.15292 5.96389L2.11049 8.22264C1.97762 8.51376 1.81685 8.79926 1.69948 9.09676Z" fill="currentColor"></path>
+              </svg>
+            </a>
+          </li>
+          <li><a class="nav-link" data-hover href="#" aria-current="page"><span data-hover-target>Films</span></a></li>
+          <li><a class="nav-link" data-hover href="#"><span data-hover-target>Television</span></a></li>
+          <li><a class="nav-link" data-hover href="#"><span data-hover-target>Index</span></a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <section id="section_hero" class="section_hero" data-disc-gallery>
+        <div class="experience_wrap">
+          <!-- 左上信息面板 -->
+          <div class="experience_info" data-disc-group="info">
+            <h1 class="heading-s" data-film-target="title">&nbsp;</h1>
+            <div class="divider-horizontal"></div>
+            <dl class="experience_credits">
+              <div class="credit-row">
+                <dt class="subheading-xs">Directed by</dt>
+                <dd class="paragraph-m" data-film-target="primary-credit">&nbsp;</dd>
+              </div>
+              <div class="credit-row">
+                <dt class="subheading-xs">Year</dt>
+                <dd class="paragraph-m" data-film-target="year">&nbsp;</dd>
+              </div>
+              <div class="credit-row">
+                <dt class="subheading-xs">Starring</dt>
+                <dd class="paragraph-m" data-film-target="starring">&nbsp;</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- 底部影评 -->
+          <div class="testimonial_wrap" data-testimonial-wrap data-disc-group="reviews">
+            <div class="testimonial_item" data-review-target-item>
+              <div class="testimonial_stars" data-review-stars aria-hidden="true"></div>
+              <p class="subheading-xs" data-review-publication>&nbsp;</p>
+              <p class="paragraph-m" data-review-text data-review-testimonial>&nbsp;</p>
+            </div>
+            <div class="divider-horizontal divider-vertical"></div>
+            <div class="testimonial_item" data-review-target-item>
+              <div class="testimonial_stars" data-review-stars aria-hidden="true"></div>
+              <p class="subheading-xs" data-review-publication>&nbsp;</p>
+              <p class="paragraph-m" data-review-text data-review-testimonial>&nbsp;</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- WebGL canvas 的归位点；切换详情时 canvas 会被摘进 [data-disc-carry] -->
+        <div data-canvas-home>
+          <div class="experience-canvas" data-disc-canvas></div>
+        </div>
+
+        <!-- 隐藏数据源：渲染代码只认这套 data 属性，换 CMS 不用动 JS -->
+        <div class="film-data" data-film-list hidden>
+        <div data-film-item>
+          <p data-film-field="title">Backrooms</p>
+          <p data-film-field="directors">Kane Parsons</p>
+          <p data-film-field="year">2026</p>
+          <p data-film-field="starring">Chiwetel Ejiofor</p>
+          <p data-film-field="starring">Renate Reinsve</p>
+          <p data-film-field="disc-art-url">assets/art/backrooms.webp</p>
+          <p data-film-field="disc-art-alt">Backrooms disc artwork</p>
+          <a data-film-field="detail-url" href="#backrooms"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Playlist</p>
+            <p data-film-field="review-testimonial">Something Far More Haunting</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Daily Beast</p>
+            <p data-film-field="review-testimonial">Casts A Surrealistic Spell</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">The Invite</p>
+          <p data-film-field="directors">Olivia Wilde</p>
+          <p data-film-field="year">2026</p>
+          <p data-film-field="starring">Seth Rogen</p>
+          <p data-film-field="starring">Olivia Wilde</p>
+          <p data-film-field="starring">Penélope Cruz</p>
+          <p data-film-field="starring">Edward Norton</p>
+          <p data-film-field="disc-art-url">assets/art/the-invite.webp</p>
+          <p data-film-field="disc-art-alt">The Invite disc artwork</p>
+          <a data-film-field="detail-url" href="#the-invite"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Times</p>
+            <p data-film-field="review-testimonial">Award-Worthy, Dazzling Sex Comedy</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Los Angeles Times</p>
+            <p data-film-field="review-testimonial">Wincing Laughs Of Recognition</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Tony</p>
+          <p data-film-field="directors">Matt Johnson</p>
+          <p data-film-field="year">2026</p>
+          <p data-film-field="starring">Dominic Sessa</p>
+          <p data-film-field="starring">Emilia Jones</p>
+          <p data-film-field="starring">Leo Woodall</p>
+          <p data-film-field="starring">Antonio Banderas</p>
+          <p data-film-field="starring">Stavros Halkias</p>
+          <p data-film-field="disc-art-url">assets/art/tony.webp</p>
+          <p data-film-field="disc-art-alt">Tony disc artwork</p>
+          <a data-film-field="detail-url" href="#tony"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Consequence</p>
+            <p data-film-field="review-testimonial">Power Of The Unexpected</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Globe and Mail</p>
+            <p data-film-field="review-testimonial">Rich One-Perfect-Summer Cinema</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Marty Supreme</p>
+          <p data-film-field="directors">Josh Safdie</p>
+          <p data-film-field="year">2025</p>
+          <p data-film-field="starring">Timothée Chalamet</p>
+          <p data-film-field="starring">Gwyneth Paltrow</p>
+          <p data-film-field="starring">Kevin O&#x27;Leary</p>
+          <p data-film-field="starring">Odessa A’zion</p>
+          <p data-film-field="starring">Abel Ferrara</p>
+          <p data-film-field="disc-art-url">assets/art/marty-supreme.webp</p>
+          <p data-film-field="disc-art-alt">Marty Supreme disc artwork</p>
+          <a data-film-field="detail-url" href="#marty-supreme"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Variety</p>
+            <p data-film-field="review-testimonial">One Of Year’s Masterpieces</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Slashfilm</p>
+            <p data-film-field="review-testimonial">Chalamet’s Best Career Performance</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">The Smashing Machine</p>
+          <p data-film-field="directors">Benny Safdie</p>
+          <p data-film-field="year">2025</p>
+          <p data-film-field="starring">Dwayne Johnson</p>
+          <p data-film-field="starring">Emily Blunt</p>
+          <p data-film-field="disc-art-url">assets/art/the-smashing-machine.webp</p>
+          <p data-film-field="disc-art-alt">The Smashing Machine disc artwork</p>
+          <a data-film-field="detail-url" href="#the-smashing-machine"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Variety</p>
+            <p data-film-field="review-testimonial">Subtler And More Moving</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Austin Chronicle</p>
+            <p data-film-field="review-testimonial">A Surprisingly Gentle Giant</p>
+            <p data-film-field="review-stars">4.5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">The Brutalist</p>
+          <p data-film-field="directors">Brady Corbet</p>
+          <p data-film-field="year">2024</p>
+          <p data-film-field="starring">Adrien Brody</p>
+          <p data-film-field="starring">Felicity Jones</p>
+          <p data-film-field="starring">Guy Pearce</p>
+          <p data-film-field="starring">Joe Alwyn</p>
+          <p data-film-field="starring">Raffey Cassidy</p>
+          <p data-film-field="disc-art-url">assets/art/the-brutalist.webp</p>
+          <p data-film-field="disc-art-alt">The Brutalist disc artwork</p>
+          <a data-film-field="detail-url" href="#the-brutalist"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Guardian</p>
+            <p data-film-field="review-testimonial">Thrilling Directness And Storytelling Force</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Rolling Stone</p>
+            <p data-film-field="review-testimonial">Storytelling Chops, Nerve And Verve</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">The Zone of Interest</p>
+          <p data-film-field="directors">Jonathan Glazer</p>
+          <p data-film-field="year">2023</p>
+          <p data-film-field="starring">Sandra Hüller</p>
+          <p data-film-field="starring">Christian Friedel</p>
+          <p data-film-field="disc-art-url">assets/art/the-zone-of-interest.webp</p>
+          <p data-film-field="disc-art-alt">The Zone of Interest disc artwork</p>
+          <a data-film-field="detail-url" href="#the-zone-of-interest"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Variety</p>
+            <p data-film-field="review-testimonial">Chilling And Profound</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Time</p>
+            <p data-film-field="review-testimonial">Devastating In The Quietest Way</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Everything Everywhere All at Once</p>
+          <p data-film-field="directors">Daniel Kwan</p>
+          <p data-film-field="directors">Daniel Scheinert</p>
+          <p data-film-field="year">2022</p>
+          <p data-film-field="starring">Michelle Yeoh</p>
+          <p data-film-field="starring">Stephanie Hsu</p>
+          <p data-film-field="starring">Ke Huy Quan</p>
+          <p data-film-field="starring">Jenny Slate</p>
+          <p data-film-field="starring">Harry Shum Jr.</p>
+          <p data-film-field="disc-art-url">assets/art/everything-everywhere-all-at-once.webp</p>
+          <p data-film-field="disc-art-alt">Everything Everywhere All at Once disc artwork</p>
+          <a data-film-field="detail-url" href="#everything-everywhere-all-at-once"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The New York Times</p>
+            <p data-film-field="review-testimonial">Galaxy-Brain Head Trip</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">IndieWire</p>
+            <p data-film-field="review-testimonial">An Orgiastic Work Of Slaphappy Genius</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Uncut Gems</p>
+          <p data-film-field="directors">Josh Safdie</p>
+          <p data-film-field="directors">Benny Safdie</p>
+          <p data-film-field="year">2019</p>
+          <p data-film-field="starring">Adam Sandler</p>
+          <p data-film-field="starring">Lakeith Stanfield</p>
+          <p data-film-field="starring">Julia Fox</p>
+          <p data-film-field="starring">Kevin Garnett</p>
+          <p data-film-field="starring">Idina Menzel</p>
+          <p data-film-field="disc-art-url">assets/art/uncut-gems.webp</p>
+          <p data-film-field="disc-art-alt">Uncut Gems disc artwork</p>
+          <a data-film-field="detail-url" href="#uncut-gems"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Variety</p>
+            <p data-film-field="review-testimonial">Locked Inside The Pinwheeling Brain</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">RogerEbert.com</p>
+            <p data-film-field="review-testimonial">Delusion Feeds Addiction</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Hereditary</p>
+          <p data-film-field="directors">Ari Aster</p>
+          <p data-film-field="year">2018</p>
+          <p data-film-field="starring">Toni Collette</p>
+          <p data-film-field="starring">Alex Wolff</p>
+          <p data-film-field="starring">Milly Shapiro</p>
+          <p data-film-field="starring">Ann Dowd</p>
+          <p data-film-field="starring">Gabriel Byrne</p>
+          <p data-film-field="disc-art-url">assets/art/hereditary.webp</p>
+          <p data-film-field="disc-art-alt">Hereditary disc artwork</p>
+          <a data-film-field="detail-url" href="#hereditary"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The Guardian</p>
+            <p data-film-field="review-testimonial">A Brilliant Machine For Scaring Us</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">RogerEbert.com</p>
+            <p data-film-field="review-testimonial">Creepy Beyond Belief</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Lady Bird</p>
+          <p data-film-field="directors">Greta Gerwig</p>
+          <p data-film-field="year">2017</p>
+          <p data-film-field="starring">Saoirse Ronan</p>
+          <p data-film-field="starring">Laurie Metcalf</p>
+          <p data-film-field="starring">Tracy Letts</p>
+          <p data-film-field="starring">Lucas Hedges</p>
+          <p data-film-field="starring">Timothée Chalamet</p>
+          <p data-film-field="disc-art-url">assets/art/lady-bird.webp</p>
+          <p data-film-field="disc-art-alt">Lady Bird disc artwork</p>
+          <a data-film-field="detail-url" href="#lady-bird"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">The New York Times</p>
+            <p data-film-field="review-testimonial">Never Quite Like This</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Los Angeles Times</p>
+            <p data-film-field="review-testimonial">As Warm As It Is Smart</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        <div data-film-item>
+          <p data-film-field="title">Ex Machina</p>
+          <p data-film-field="directors">Alex Garland</p>
+          <p data-film-field="year">2015</p>
+          <p data-film-field="starring">Oscar Isaac</p>
+          <p data-film-field="starring">Domhnall Gleeson</p>
+          <p data-film-field="starring">Alicia Vikander</p>
+          <p data-film-field="disc-art-url">assets/art/ex-machina.webp</p>
+          <p data-film-field="disc-art-alt">Ex Machina disc artwork</p>
+          <a data-film-field="detail-url" href="#ex-machina"></a>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">RogerEbert.com</p>
+            <p data-film-field="review-testimonial">A Rare And Welcome Exception</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+          <div data-review-source-item>
+            <p data-film-field="review-publication">Los Angeles Times</p>
+            <p data-film-field="review-testimonial">Shrewdly Imagined And Persuasively Made</p>
+            <p data-film-field="review-stars">5</p>
+          </div>
+        </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 切换详情时 canvas 临时挂到这里，脱离页面布局 -->
+    <div class="disc-carry" data-disc-carry aria-hidden="true"></div>
+
+    <!-- 详情覆盖层。原站是 Barba 多页切换，这里是单页等效实现 -->
+    <div class="detail" data-detail-overlay hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Film detail">
+      <article class="detail__panel">
+        <button class="detail__close" data-detail-close type="button" aria-label="Close detail">Close</button>
+        <h2 class="heading-s" data-detail-title data-detail-reveal></h2>
+        <div class="divider-horizontal" data-detail-reveal></div>
+        <p class="paragraph-m" data-detail-meta data-detail-reveal></p>
+        <p class="paragraph-m detail__starring" data-detail-starring data-detail-reveal></p>
+        <div class="detail__quotes" data-detail-quotes></div>
+      </article>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

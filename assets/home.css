@@ -1,0 +1,167 @@
+:root {
+  --bg: #f2f2f2;
+  --ink: #111;
+  --muted: #6b6b6b;
+  --line: #d6d3d1;
+  --card: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0f13;
+    --ink: #ececec;
+    --muted: #9a9a9a;
+    --line: #2a2b31;
+    --card: #17181d;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: clamp(1.5rem, 5vw, 4rem) clamp(1rem, 5vw, 4rem);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.masthead {
+  max-width: 44rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.masthead h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.card__link {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--card);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 0.25s cubic-bezier(0.32, 0.72, 0, 1),
+    border-color 0.25s;
+}
+
+.card__link:hover,
+.card__link:focus-visible {
+  transform: translateY(-2px);
+  border-color: currentColor;
+}
+
+.card__shot {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(140deg, var(--line), transparent);
+  overflow: hidden;
+}
+
+.card__shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 还没放预览图的条目只留底色，不显示破图 */
+.card__shot.is-empty img {
+  display: none;
+}
+
+.card__body {
+  padding: 1rem 1.125rem 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.card__body h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 550;
+}
+
+.card__sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.card__summary {
+  margin: 0.2rem 0 0;
+  font-size: 0.9375rem;
+}
+
+.card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card__stack li {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 10rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.card__credit {
+  margin: 0;
+  padding-left: 0.2rem;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.card__credit a {
+  color: inherit;
+}
+
+.foot {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  max-width: 44rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.foot p {
+  margin: 0;
+}

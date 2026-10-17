@@ -1,0 +1,340 @@
+[
+  {
+    "title": "Backrooms",
+    "directors": [
+      "Kane Parsons"
+    ],
+    "year": "2026",
+    "starring": [
+      "Chiwetel Ejiofor",
+      "Renate Reinsve"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/backrooms/disc.webp?v=7",
+    "discArtAlt": "Backrooms disc artwork",
+    "detailUrl": "/production/backrooms",
+    "reviews": [
+      {
+        "publication": "The Playlist",
+        "testimonial": "Something Far More Haunting",
+        "stars": 5.0
+      },
+      {
+        "publication": "The Daily Beast",
+        "testimonial": "Casts A Surrealistic Spell",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "The Invite",
+    "directors": [
+      "Olivia Wilde"
+    ],
+    "year": "2026",
+    "starring": [
+      "Seth Rogen",
+      "Olivia Wilde",
+      "Penélope Cruz",
+      "Edward Norton"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/the-invite/disc.webp?v=7",
+    "discArtAlt": "The Invite disc artwork",
+    "detailUrl": "/production/the-invite",
+    "reviews": [
+      {
+        "publication": "The Times",
+        "testimonial": "Award-Worthy, Dazzling Sex Comedy",
+        "stars": 5.0
+      },
+      {
+        "publication": "Los Angeles Times",
+        "testimonial": "Wincing Laughs Of Recognition",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "Tony",
+    "directors": [
+      "Matt Johnson"
+    ],
+    "year": "2026",
+    "starring": [
+      "Dominic Sessa",
+      "Emilia Jones",
+      "Leo Woodall",
+      "Antonio Banderas",
+      "Stavros Halkias"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/tony/disc.webp?v=7",
+    "discArtAlt": "Tony disc artwork",
+    "detailUrl": "/production/tony",
+    "reviews": [
+      {
+        "publication": "Consequence",
+        "testimonial": "Power Of The Unexpected",
+        "stars": 4.5
+      },
+      {
+        "publication": "The Globe and Mail",
+        "testimonial": "Rich One-Perfect-Summer Cinema",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "Marty Supreme",
+    "directors": [
+      "Josh Safdie"
+    ],
+    "year": "2025",
+    "starring": [
+      "Timothée Chalamet",
+      "Gwyneth Paltrow",
+      "Kevin O'Leary",
+      "Odessa A’zion",
+      "Abel Ferrara"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/marty-supreme/disc.webp?v=7",
+    "discArtAlt": "Marty Supreme disc artwork",
+    "detailUrl": "/production/marty-supreme",
+    "reviews": [
+      {
+        "publication": "Variety",
+        "testimonial": "One Of Year’s Masterpieces",
+        "stars": 5.0
+      },
+      {
+        "publication": "Slashfilm",
+        "testimonial": "Chalamet’s Best Career Performance",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "The Smashing Machine",
+    "directors": [
+      "Benny Safdie"
+    ],
+    "year": "2025",
+    "starring": [
+      "Dwayne Johnson",
+      "Emily Blunt"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/the-smashing-machine/disc.webp?v=7",
+    "discArtAlt": "The Smashing Machine disc artwork",
+    "detailUrl": "/production/the-smashing-machine",
+    "reviews": [
+      {
+        "publication": "Variety",
+        "testimonial": "Subtler And More Moving",
+        "stars": 4.5
+      },
+      {
+        "publication": "Austin Chronicle",
+        "testimonial": "A Surprisingly Gentle Giant",
+        "stars": 4.5
+      }
+    ]
+  },
+  {
+    "title": "The Brutalist",
+    "directors": [
+      "Brady Corbet"
+    ],
+    "year": "2024",
+    "starring": [
+      "Adrien Brody",
+      "Felicity Jones",
+      "Guy Pearce",
+      "Joe Alwyn",
+      "Raffey Cassidy"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/the-brutalist/disc.webp?v=7",
+    "discArtAlt": "The Brutalist disc artwork",
+    "detailUrl": "/production/the-brutalist",
+    "reviews": [
+      {
+        "publication": "The Guardian",
+        "testimonial": "Thrilling Directness And Storytelling Force",
+        "stars": 5.0
+      },
+      {
+        "publication": "Rolling Stone",
+        "testimonial": "Storytelling Chops, Nerve And Verve",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "The Zone of Interest",
+    "directors": [
+      "Jonathan Glazer"
+    ],
+    "year": "2023",
+    "starring": [
+      "Sandra Hüller",
+      "Christian Friedel"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/the-zone-of-interest/disc.webp?v=7",
+    "discArtAlt": "The Zone of Interest disc artwork",
+    "detailUrl": "/production/the-zone-of-interest",
+    "reviews": [
+      {
+        "publication": "Variety",
+        "testimonial": "Chilling And Profound",
+        "stars": 5.0
+      },
+      {
+        "publication": "Time",
+        "testimonial": "Devastating In The Quietest Way",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "Everything Everywhere All at Once",
+    "directors": [
+      "Daniel Kwan",
+      "Daniel Scheinert"
+    ],
+    "year": "2022",
+    "starring": [
+      "Michelle Yeoh",
+      "Stephanie Hsu",
+      "Ke Huy Quan",
+      "Jenny Slate",
+      "Harry Shum Jr."
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/everything-everywhere-all-at-once/disc.webp?v=7",
+    "discArtAlt": "Everything Everywhere All at Once disc artwork",
+    "detailUrl": "/production/everything-everywhere-all-at-once",
+    "reviews": [
+      {
+        "publication": "The New York Times",
+        "testimonial": "Galaxy-Brain Head Trip",
+        "stars": 5.0
+      },
+      {
+        "publication": "IndieWire",
+        "testimonial": "An Orgiastic Work Of Slaphappy Genius",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "Uncut Gems",
+    "directors": [
+      "Josh Safdie",
+      "Benny Safdie"
+    ],
+    "year": "2019",
+    "starring": [
+      "Adam Sandler",
+      "Lakeith Stanfield",
+      "Julia Fox",
+      "Kevin Garnett",
+      "Idina Menzel"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/uncut-gems/disc.webp?v=7",
+    "discArtAlt": "Uncut Gems disc artwork",
+    "detailUrl": "/production/uncut-gems",
+    "reviews": [
+      {
+        "publication": "Variety",
+        "testimonial": "Locked Inside The Pinwheeling Brain",
+        "stars": 5.0
+      },
+      {
+        "publication": "RogerEbert.com",
+        "testimonial": "Delusion Feeds Addiction",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "Hereditary",
+    "directors": [
+      "Ari Aster"
+    ],
+    "year": "2018",
+    "starring": [
+      "Toni Collette",
+      "Alex Wolff",
+      "Milly Shapiro",
+      "Ann Dowd",
+      "Gabriel Byrne"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/hereditary/disc.webp?v=7",
+    "discArtAlt": "Hereditary disc artwork",
+    "detailUrl": "/production/hereditary",
+    "reviews": [
+      {
+        "publication": "The Guardian",
+        "testimonial": "A Brilliant Machine For Scaring Us",
+        "stars": 5.0
+      },
+      {
+        "publication": "RogerEbert.com",
+        "testimonial": "Creepy Beyond Belief",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "Lady Bird",
+    "directors": [
+      "Greta Gerwig"
+    ],
+    "year": "2017",
+    "starring": [
+      "Saoirse Ronan",
+      "Laurie Metcalf",
+      "Tracy Letts",
+      "Lucas Hedges",
+      "Timothée Chalamet"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/lady-bird/disc.webp?v=7",
+    "discArtAlt": "Lady Bird disc artwork",
+    "detailUrl": "/production/lady-bird",
+    "reviews": [
+      {
+        "publication": "The New York Times",
+        "testimonial": "Never Quite Like This",
+        "stars": 5.0
+      },
+      {
+        "publication": "Los Angeles Times",
+        "testimonial": "As Warm As It Is Smart",
+        "stars": 5.0
+      }
+    ]
+  },
+  {
+    "title": "Ex Machina",
+    "directors": [
+      "Alex Garland"
+    ],
+    "year": "2015",
+    "starring": [
+      "Oscar Isaac",
+      "Domhnall Gleeson",
+      "Alicia Vikander"
+    ],
+    "discArtUrl": "https://raviklaassens.b-cdn.net/a24/films/ex-machina/disc.webp?v=7",
+    "discArtAlt": "Ex Machina disc artwork",
+    "detailUrl": "/production/ex-machina",
+    "reviews": [
+      {
+        "publication": "RogerEbert.com",
+        "testimonial": "A Rare And Welcome Exception",
+        "stars": 5.0
+      },
+      {
+        "publication": "Los Angeles Times",
+        "testimonial": "Shrewdly Imagined And Persuasively Made",
+        "stars": 5.0
+      }
+    ]
+  }
+]

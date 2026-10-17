@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web Remakes — 网页效果复刻合集</title>
+    <meta
+      name="description"
+      content="把看到的好网页拆开再拼回去：每个复刻都附带参数出处与实现说明。"
+    />
+    <link rel="stylesheet" href="assets/home.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <h1>Web Remakes</h1>
+      <p class="lede">
+        把看到的好网页拆开，再用尽量少的依赖拼回去。每个复刻都记下参数出处、还原到什么程度、
+        哪里是推断，方便对照着读代码。
+      </p>
+    </header>
+
+    <main>
+      <ul class="grid" id="grid"></ul>
+    </main>
+
+    <footer class="foot">
+      <p>
+        复刻仅用于学习与技术研究。原站的设计、文案与图片版权归原作者所有，
+        每个条目都标注了来源。
+      </p>
+    </footer>
+
+    <script type="module">
+      const grid = document.getElementById('grid');
+      const { remakes } = await fetch('remakes/index.json').then((r) => r.json());
+
+      grid.replaceChildren(
+        ...remakes.map((item) => {
+          const li = document.createElement('li');
+          li.className = 'card';
+
+          const link = document.createElement('a');
+          link.className = 'card__link';
+          link.href = `remakes/${item.slug}/`;
+
+          const shot = document.createElement('div');
+          shot.className = 'card__shot';
+          const img = document.createElement('img');
+          img.src = `remakes/${item.slug}/preview.jpg`;
+          img.alt = `${item.title} 复刻预览`;
+          img.loading = 'lazy';
+          // 还没截图的条目不显示破图
+          img.addEventListener('error', () => shot.classList.add('is-empty'));
+          shot.appendChild(img);
+
+          const body = document.createElement('div');
+          body.className = 'card__body';
+
+          const h2 = document.createElement('h2');
+          h2.textContent = item.title;
+
+          const sub = document.createElement('p');
+          sub.className = 'card__sub';
+          sub.textContent = item.subtitle;
+
+          const summary = document.createElement('p');
+          summary.className = 'card__summary';
+          summary.textContent = item.summary;
+
+          const stack = document.createElement('ul');
+          stack.className = 'card__stack';
+          stack.replaceChildren(
+            ...item.stack.map((name) => {
+              const tag = document.createElement('li');
+              tag.textContent = name;
+              return tag;
+            }),
+          );
+
+          body.append(h2, sub, summary, stack);
+          link.append(shot, body);
+
+          const credit = document.createElement('p');
+          credit.className = 'card__credit';
+          const src = document.createElement('a');
+          src.href = item.source;
+          src.rel = 'noopener noreferrer';
+          src.target = '_blank';
+          src.textContent = new URL(item.source).hostname;
+          credit.append('原站 ', src, ` · ${item.sourceCredit}`);
+
+          li.append(link, credit);
+          return li;
+        }),
+      );
+    </script>
+  </body>
+</html>
